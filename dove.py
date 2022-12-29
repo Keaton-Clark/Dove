@@ -12,6 +12,11 @@ messages = [" ILY\nDove", " Ur\nCute", "Babzy\nWabzy", " <3 ", "Love\nDove", "I 
 class Dove:
     current_pokemon = 0
     def __init__(self):
+        wifi.radio.connect('SpectrumSetup-11', 'lessmemory592')
+        self.requests = adafruit_requests.Session(
+            socketpool.SocketPool(wifi.radio),
+            ssl.create_default_context()
+        )
         matrix = rgbmatrix.RGBMatrix(
             width=64, bit_depth=6,
             rgb_pins=[board.GP2, board.GP3, board.GP4, board.GP5, board.GP8, board.GP9],
@@ -36,9 +41,10 @@ class Dove:
     def get(self, url):
         print("Getting: " + url)
         try:
-            return requests.get(url)
+            return self.requests.get(url)
         except Exception as e:
             print("Error getting: " + url)
+            print(e)
             return self.get(url)
     
     def displaybmp(self, filename):
